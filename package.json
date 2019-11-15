@@ -1,0 +1,22 @@
+{
+  "name": "match",
+  "version": "1.0.0",
+  "description": "Match Javascript object against a pattern. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mshen7310/match.git"
+  },
+  "keywords": [
+    "javascript"
+  ],
+  "author": "mshen7310",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mshen7310/match/issues"
+  },
+  "homepage": "https://github.com/mshen7310/match#readme"
+}
