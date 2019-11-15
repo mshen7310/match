@@ -1,7 +1,7 @@
 {
-  "name": "match",
+  "name": "structural-match",
   "version": "1.0.0",
-  "description": "Match Javascript object against a pattern. ",
+  "description": "Structural matching utility.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
