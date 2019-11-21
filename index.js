@@ -32,7 +32,9 @@ function is_regexp(x){
 }
 function optional(pattern){
 	return function (x){
-		return typeof x == 'undefined' ||  match(x, pattern);
+		if(typeof x == 'undefined')
+			return true;
+		return match(x, pattern);
 	};
 }
 function and(...patterns){
@@ -139,6 +141,8 @@ const dispatch_table = {
 				const ks = Object.keys(ptn);
 				for(var i = 0; i< ks.length; ++i){
 					if(!match(x[ks[i]], ptn[ks[i]])){
+						// console.log(ks[i],'mismatch');
+						// console.log(x[ks[i]], '*****', ptn[ks[i]]);
 						return false;
 					}
 				}
@@ -154,9 +158,6 @@ function match(x, ptn){
 	const ptn_type = type_of(ptn);
 	if(x_type == 'unknown' || ptn_type == 'unknown'){
 		return false;
-	}
-	if(x_type == 'function' && ptn_type == 'function'){
-		return x.toString() == ptn.toString();
 	}
 	if(ptn_type == 'function'){
 		return ptn(x);
@@ -185,3 +186,4 @@ match.none = not;
 match.not = not;
 match.is_empty = x => (is_array(x) && x.length == 0) || (is_object(x) && Object.keys(x).length == 0) || (is_string(x) && x.length == 0);
 module.exports = match;
+
