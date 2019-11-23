@@ -32,9 +32,7 @@ function is_regexp(x){
 }
 function optional(pattern){
 	return function (x){
-		if(typeof x == 'undefined')
-			return true;
-		return match(x, pattern);
+		return (typeof x == 'undefined') || match(x, pattern);
 	};
 }
 function and(...patterns){
