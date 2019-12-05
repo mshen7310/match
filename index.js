@@ -8,7 +8,8 @@ function is_array(x){
 	return Array.isArray(x);
 }
 function is_primitive(x){
-	return typeof x == 'string' || typeof x == 'number' || typeof x == 'undefined' || typeof x == 'boolean'; 
+	const type = typeof x;
+	return type == 'string' || type == 'number' || type == 'undefined' || type == 'boolean'; 
 }
 function is_number(x){
 	return typeof x == 'number';
@@ -30,28 +31,43 @@ function is_string(x){
 function is_regexp(x){
 	return x instanceof RegExp;
 }
+
+function is_instanceof(Class){
+	return function(x, ...acc){
+		return x instanceof Class;
+	};
+}
+function is_empty(x){
+	return (is_array(x) && x.length == 0) || (is_object(x) && Object.keys(x).length == 0) || (is_string(x) && x.length == 0);
+}
+
 function optional(pattern){
-	return function (x, acc){
-		return (typeof x == 'undefined') || match(x, pattern, acc);
+	return function (x, ...acc){
+		return (typeof x == 'undefined') || match(x, pattern, ...acc);
 	};
 }
 function and(...patterns){
-	return function(x, acc){
-		return patterns.reduce((a,c)=>a && match(x, c, acc), true);
+	return function(x, ...acc){
+		return patterns.reduce((a,c)=>a && match(x, c, ...acc), true);
 	};
 }
 function or(...patterns){
-	return function(x, acc){
-		return patterns.reduce((a,c)=>a || match(x, c, acc), false);
+	return function(x, ...acc){
+		return patterns.reduce((a,c)=>a || match(x, c, ...acc), false);
 	};
 }
 function not(...patterns){
 	let or_func = or(...patterns);
-	return function(x, acc){
-		return !or_func(x, acc);
+	return function(x, ...acc){
+		return !or_func(x, ...acc);
 	};
 }
-
+function yes(){
+	return true;
+}
+function no(){
+	return false;
+}
 function type_of(x){
 	if(is_primitive(x)){
 		return 'primitive';
@@ -69,104 +85,86 @@ function type_of(x){
 }
 const dispatch_table = {
 	primitive:{
-		primitive: function(x, ptn, acc){
-			return acc(x == ptn, x);
+		primitive: function(x, ptn, ...acc){
+			return x === ptn;
 		},
-		array: function(x, ptn, acc){
-			return acc(false, x);
+		array: no,
+		regexp: function(x, ptn, ...acc){
+			return ptn.test(x.toString());
 		},
-		regexp: function(x, ptn, acc){
-			return acc(ptn.test(x.toString()), x);
-		},
-		object: function(x, ptn, acc){
-			return acc(false, x);
-		}
+		object: no
 	},
 	array:{
-		primitive: function(x, ptn, acc){
-			return acc(false, x);
-		},
-		array: function(x, ptn, acc){
+		primitive: no,
+		array: function(x, ptn, ...acc){
 			function match_array(u){
 				for(var j=0; j < ptn.length; ++j){
-					if(match(u, ptn[j], acc))
+					if(match(u, ptn[j], ...acc))
 						return true;
 				}
 				return false;
 			}
 			if(ptn.length > 0){
 				for(var i=0; i < x.length; ++i){
-					if(!match_array(x[i])){
-						return acc(false, x);
+					if(false === match_array(x[i])){
+						return false;
 					}
 				}	
 			}
-			return acc(true, x);
+			return true;
 		},
-		regexp: function(x, ptn, acc){
-			return acc(ptn.test(x.toString()), x);
+		regexp: function(x, ptn, ...acc){
+			return ptn.test(x.toString());
 		},
-		object: function(x, ptn, acc){
-			return acc(false, x);
-		}
+		object: no
 	},
 	regexp:{
-		primitive: function(x, ptn, acc){
-			return acc(x.toString() == ptn, x);
+		primitive: function(x, ptn, ...acc){
+			return x.toString() == ptn;
 		},
-		array: function(x, ptn, acc){
-			return acc(false, x);
+		array: no,
+		regexp: function(x, ptn, ...acc){
+			return x.toString() == ptn.toString();
 		},
-		regexp: function(x, ptn, acc){
-			return acc(x.toString() == ptn.toString(), x);
-		},
-		object: function(x, ptn, acc){
-			return acc(false, x);
-		}
+		object: no
 	},
 	object:{
-		primitive: function(x, ptn, acc){
-			return acc(false, x);
+		primitive: no,
+		array: no,
+		regexp: function(x, ptn, ...acc){
+			return ptn.test(x.toString());
 		},
-		array: function(x, ptn, acc){
-			return acc(false, x);
-		},
-		regexp: function(x, ptn, acc){
-			return acc(ptn.test(x.toString()), x);
-		},
-		object: function(x, ptn, acc){
+		object: function(x, ptn, ...acc){
 			if(x && ptn){
 				const ks = Object.keys(ptn);
 				for(var i = 0; i< ks.length; ++i){
-					if(!match(x[ks[i]], ptn[ks[i]], acc)){
+					if(!match(x[ks[i]], ptn[ks[i]], ...acc)){
 						// console.log(ks[i],'mismatch');
 						// console.log(x[ks[i]], '*****', ptn[ks[i]]);
-						return acc(false, x[ks[i]]);
+						return false;
 					}
 				}
-				return acc(true, x);    
+				return true;    
 			}
-			return acc(!(x || ptn), x);
+			return !(x || ptn);
 		}
 	}    
 };
 
-function match(x, ptn, acc){
-	acc = is_function(acc) ? acc : x => x;
+function match(x, ptn, ...acc){
 	const x_type = type_of(x);
 	const ptn_type = type_of(ptn);
 	if(x_type == 'unknown' || ptn_type == 'unknown'){
-		return acc(false, x);
+		return false;
 	}
 	if(ptn_type == 'function'){
-		return acc(ptn(x, acc), x);
+		return ptn(x, ...acc);
 	}
 	if(x_type == 'function'){
-		return acc(false, x);
+		return false;
 	}
-	return dispatch_table[x_type][ptn_type](x, ptn, acc);
+	return dispatch_table[x_type][ptn_type](x, ptn, ...acc);
 }
-
 match.primitive 	= match.is_primitive 	= is_primitive;
 match.array 		= match.is_array 		= is_array;
 match.function 		= match.is_function 	= is_function;
@@ -177,6 +175,8 @@ match.boolean 		= match.is_boolean 		= is_boolean;
 match.undefined 	= match.is_undefined 	= is_undefined;
 match.null 			= match.is_null 		= is_null;
 match.string		= match.is_string 		= is_string;
+match.instanceof   	= match.is_instanceof	= is_instanceof;
+match.empty			= match.is_empty 		= is_empty;
 match.optional 		= optional;
 match.and 			= and;
 match.all 			= and;
@@ -184,6 +184,7 @@ match.or 			= or;
 match.any 			= or;
 match.none 			= not;
 match.not 			= not;
-match.empty			= match.is_empty 		= x => (is_array(x) && x.length == 0) || (is_object(x) && Object.keys(x).length == 0) || (is_string(x) && x.length == 0);
+match.no			= no;
+match.yes			= yes;
 module.exports		= match;
 
