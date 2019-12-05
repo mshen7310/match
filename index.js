@@ -80,13 +80,13 @@ function type_of(x){
 	} else if(is_function(x)){
 		return 'function';
 	} else {
-		return 'unknown';
+		throw Error(`Unknown type of express: ${x}`);
 	}
 }
 const dispatch_table = {
 	primitive:{
-		primitive: function(x, ptn, ...acc){
-			return x === ptn;
+		primitive: function(x, ptn, strict){
+			return strict ? x === ptn : x == ptn;
 		},
 		array: no,
 		regexp: function(x, ptn, ...acc){
@@ -154,9 +154,6 @@ const dispatch_table = {
 function match(x, ptn, ...acc){
 	const x_type = type_of(x);
 	const ptn_type = type_of(ptn);
-	if(x_type == 'unknown' || ptn_type == 'unknown'){
-		return false;
-	}
 	if(ptn_type == 'function'){
 		return ptn(x, ...acc);
 	}

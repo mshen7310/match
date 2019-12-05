@@ -1,10 +1,10 @@
 {
   "name": "structural-match",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Structural matching utility.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc mocha ./test"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/mshen7310/match/issues"
   },
-  "homepage": "https://github.com/mshen7310/match#readme"
+  "homepage": "https://github.com/mshen7310/match#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1"
+  }
 }
