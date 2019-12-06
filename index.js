@@ -32,9 +32,11 @@ function is_regexp(x){
 	return x instanceof RegExp;
 }
 
-function is_instanceof(Class){
+function is_instanceof(...Classes){
 	return function(x, ...acc){
-		return x instanceof Class;
+		return Classes.reduce((a, c)=>{
+			return a || (x instanceof c);
+		}, false);
 	};
 }
 function is_empty(x){

@@ -50,8 +50,10 @@ describe('Adapter Testing match.js', function(){
         assert.ok(!match(1, /abc/));
     });
     it('should work on instanceof', function(){
-        function Test(){}
-        assert.ok(match(new Test(), match.instanceof(Test)));
+		function Test(){}
+		function Test2(){}
+		assert.ok(match(new Test(), match.instanceof(Test)));
+		assert.ok(match(new Test(), match.instanceof(Test2, Test)));
     });
     it('should work on empty', function(){
         assert.ok(match(123, match.yes));
