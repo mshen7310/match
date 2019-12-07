@@ -92,7 +92,7 @@ const dispatch_table = {
 		},
 		array: no,
 		regexp: function(x, ptn, ...acc){
-			return ptn.test(x.toString());
+			return is_string(x) && ptn.test(x.toString());
 		},
 		object: no
 	},
@@ -115,9 +115,7 @@ const dispatch_table = {
 			}
 			return true;
 		},
-		regexp: function(x, ptn, ...acc){
-			return ptn.test(x.toString());
-		},
+		regexp: no,
 		object: no
 	},
 	regexp:{
@@ -133,9 +131,7 @@ const dispatch_table = {
 	object:{
 		primitive: no,
 		array: no,
-		regexp: function(x, ptn, ...acc){
-			return ptn.test(x.toString());
-		},
+		regexp: no,
 		object: function(x, ptn, ...acc){
 			if(x && ptn){
 				const ks = Object.keys(ptn);
