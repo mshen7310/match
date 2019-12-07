@@ -90,18 +90,15 @@ const dispatch_table = {
 		primitive: function(x, ptn, strict){
 			return strict ? x === ptn : x == ptn;
 		},
-		array: no,
 		regexp: function(x, ptn, ...acc){
 			return is_string(x) && ptn.test(x.toString());
-		},
-		object: no
+		}
 	},
 	array:{
-		primitive: no,
 		array: function(x, ptn, ...acc){
 			function match_array(u){
 				for(var j=0; j < ptn.length; ++j){
-					if(match(u, ptn[j], ...acc))
+					if(true === match(u, ptn[j], ...acc))
 						return true;
 				}
 				return false;
@@ -109,34 +106,28 @@ const dispatch_table = {
 			if(ptn.length > 0){
 				for(var i=0; i < x.length; ++i){
 					if(false === match_array(x[i])){
+						// console.log(x, ptn, x[i]);
 						return false;
 					}
 				}	
 			}
 			return true;
-		},
-		regexp: no,
-		object: no
+		}
 	},
 	regexp:{
 		primitive: function(x, ptn, ...acc){
 			return x.toString() == ptn;
 		},
-		array: no,
 		regexp: function(x, ptn, ...acc){
 			return x.toString() == ptn.toString();
-		},
-		object: no
+		}
 	},
 	object:{
-		primitive: no,
-		array: no,
-		regexp: no,
 		object: function(x, ptn, ...acc){
 			if(x && ptn){
 				const ks = Object.keys(ptn);
 				for(var i = 0; i< ks.length; ++i){
-					if(!match(x[ks[i]], ptn[ks[i]], ...acc)){
+					if(false === match(x[ks[i]], ptn[ks[i]], ...acc)){
 						// console.log(ks[i],'mismatch');
 						// console.log(x[ks[i]], '*****', ptn[ks[i]]);
 						return false;
@@ -158,7 +149,11 @@ function match(x, ptn, ...acc){
 	if(x_type == 'function'){
 		return false;
 	}
-	return dispatch_table[x_type][ptn_type](x, ptn, ...acc);
+	const f = dispatch_table[x_type][ptn_type];
+	if(f)
+		return f(x, ptn, ...acc);
+	else
+		return false;
 }
 match.primitive 	= match.is_primitive 	= is_primitive;
 match.array 		= match.is_array 		= is_array;

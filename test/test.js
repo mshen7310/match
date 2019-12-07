@@ -123,6 +123,7 @@ describe('Adapter Testing match.js', function(){
 	});
 	it('should work on array vs. array', function(){
 		assert.ok(match([],[]));
+		assert.ok(match([1,2,3],[3,2,1]));
 		assert.ok(match([1,2,3],[1,2,3]));
 		assert.ok(match([1,2,3],[1,2,3,4]));
 		assert.ok(!match([1,2,3],[1,2]));
