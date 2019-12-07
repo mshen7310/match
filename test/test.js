@@ -203,6 +203,18 @@ describe('Adapter Testing match.js', function(){
 		assert.ok(!match(()=>{}, {}));
 		assert.ok(!match(()=>{}, []));
 	});
+	it('should work on function with fields', function(){
+		let x = ()=>{};
+		let y = ()=>{};
+		x.h = 1;
+		y.h = 1;
+		y.i = 2;
+		assert.ok(match(x, match.funobj({h:1})));
+		assert.ok(!match(x, match.funobj({h:1,i:2})));
+		assert.ok(match(y, match.funobj({h:1,i:2})));
+		assert.ok(match(y, match.funobj(x)));
+		assert.ok(!match(x, match.funobj(y)));
+	});
 	it('should pass additional arguments through', function(){
 		assert.ok(match({
 			name: 'submitOrder',

@@ -64,6 +64,26 @@ function not(...patterns){
 		return !or_func(x, ...acc);
 	};
 }
+function object_object(x, ptn, ...acc){
+	if(x && ptn){
+		const ks = Object.keys(ptn);
+		for(var i = 0; i< ks.length; ++i){
+			if(false === match(x[ks[i]], ptn[ks[i]], ...acc)){
+				// console.log(ks[i],'mismatch');
+				// console.log(x[ks[i]], '*****', ptn[ks[i]]);
+				return false;
+			}
+		}
+		return true;    
+	}
+	return !(x || ptn);
+}
+
+function funobj(obj){
+	return function(x, ...acc){
+		return object_object(x, obj, ...acc);
+	};
+}
 function yes(){
 	return true;
 }
@@ -123,37 +143,19 @@ const dispatch_table = {
 		}
 	},
 	object:{
-		object: function(x, ptn, ...acc){
-			if(x && ptn){
-				const ks = Object.keys(ptn);
-				for(var i = 0; i< ks.length; ++i){
-					if(false === match(x[ks[i]], ptn[ks[i]], ...acc)){
-						// console.log(ks[i],'mismatch');
-						// console.log(x[ks[i]], '*****', ptn[ks[i]]);
-						return false;
-					}
-				}
-				return true;    
-			}
-			return !(x || ptn);
-		}
-	}    
+		object: object_object
+	},
+	function:{
+	}
 };
 
 function match(x, ptn, ...acc){
-	const x_type = type_of(x);
-	const ptn_type = type_of(ptn);
+	let ptn_type = type_of(ptn);
 	if(ptn_type == 'function'){
 		return ptn(x, ...acc);
 	}
-	if(x_type == 'function'){
-		return false;
-	}
-	const f = dispatch_table[x_type][ptn_type];
-	if(f)
-		return f(x, ptn, ...acc);
-	else
-		return false;
+	let f = dispatch_table[type_of(x)][ptn_type];
+	return f ? f(x, ptn, ...acc) : false;
 }
 match.primitive 	= match.is_primitive 	= is_primitive;
 match.array 		= match.is_array 		= is_array;
@@ -167,14 +169,13 @@ match.null 			= match.is_null 		= is_null;
 match.string		= match.is_string 		= is_string;
 match.instanceof   	= match.is_instanceof	= is_instanceof;
 match.empty			= match.is_empty 		= is_empty;
-match.optional 		= optional;
-match.and 			= and;
-match.all 			= and;
-match.or 			= or;
-match.any 			= or;
-match.none 			= not;
-match.not 			= not;
+match.and 			= match.all				= and;
+match.or 			= match.any				= or;
+match.not 			= match.none			= not;
 match.no			= no;
 match.yes			= yes;
+match.optional 		= optional;
+match.funobj		= funobj;
+
 module.exports		= match;
 
