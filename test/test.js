@@ -17,6 +17,7 @@ describe('Adapter Testing match.js', function(){
         assert.ok(match(undefined, match.undefined));
 		assert.ok(!match(undefined, 1));
 		assert.ok(!match(undefined, 'a'));
+		assert.ok(!match(undefined, /a/));
         assert.ok(match(true, true));
         assert.ok(match(true, match.boolean));
         assert.ok(match(false, match.boolean));
