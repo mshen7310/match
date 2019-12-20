@@ -121,6 +121,7 @@ describe('Adapter Testing match.js', function(){
 		assert.ok(!match({},[]));
 		assert.ok(!match(null,[]));
 	});
+
 	it('should work on array vs. array', function(){
 		assert.ok(match([],[]));
 		assert.ok(match([1,2,3],[3,2,1]));
@@ -140,10 +141,15 @@ describe('Adapter Testing match.js', function(){
 		assert.ok(match(undefined,match.optional(match.is_array)));
 		assert.ok(match(undefined,match.optional([])));
 	});
+
 	it('should work on any and none predicates', function(){
 		assert.ok(match([], match.any([], {}, 1, 2)));
 		assert.ok(!match([],match.none([], {})));
 		assert.ok(match([], match.all(x=>typeof x=='object', match.is_array)));
+	});
+	it('should check if array contains certain element', function(){
+		assert.ok(match([1,2,3], match.contain(1)));
+		assert.ok(!match([1,2,3],match.contain(4)));
 	});
 
 	it('should work on complex object', function(){

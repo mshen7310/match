@@ -33,7 +33,7 @@ function is_regexp(x){
 }
 
 function is_instanceof(...Classes){
-	return function(x, ...acc){
+	return function(x){
 		return Classes.reduce((a, c)=>{
 			return a || (x instanceof c);
 		}, false);
@@ -62,6 +62,18 @@ function not(...patterns){
 	let or_func = or(...patterns);
 	return function(x, ...acc){
 		return !or_func(x, ...acc);
+	};
+}
+function contain(pattern){
+	return function(x, ...acc){
+		if(is_array(x)){
+			for(var i = 0;i < x.length; ++i){
+				if(true === match(x[i], pattern, ...acc)){
+					return true;
+				}
+			}
+		}
+		return false;
 	};
 }
 function object_object(x, ptn, ...acc){
@@ -176,6 +188,7 @@ match.no			= no;
 match.yes			= yes;
 match.optional 		= optional;
 match.funobj		= funobj;
+match.contain		= contain;
 
 module.exports		= match;
 
