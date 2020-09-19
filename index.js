@@ -64,6 +64,18 @@ function not(...patterns){
 		return !or_func(x, ...acc);
 	};
 }
+function subarray(pattern){
+	return function(x, ...acc){
+		if(is_array(x)){
+			for(var i = 0;i < x.length; ++i){
+				if(true === match(x.slice(i, i + pattern.length), pattern, ...acc)){
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+}
 function contain(pattern){
 	return function(x, ...acc){
 		if(is_array(x)){
@@ -189,6 +201,7 @@ match.yes			= yes;
 match.optional 		= optional;
 match.funobj		= funobj;
 match.contain		= contain;
+match.subarray		= subarray;
 
 module.exports		= match;
 

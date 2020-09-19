@@ -2,6 +2,12 @@ const match = require('../index');
 const assert = require('assert');
 
 describe('Adapter Testing match.js', function(){
+	it('should find sub array in array', function(){
+		assert.ok(match([1,2,3,4,5], match.subarray([2,3])));
+		assert.ok(match([1,2,3,4,5], match.subarray([1,2])));
+		assert.ok(match([1,2,3,4,5], match.subarray([4,5])));
+		assert.ok(!match([1,2,3,4,5], match.subarray([2,4])));
+	})
 	it('should work on primitive vs. primitive', function(){
 		assert.ok(!match(1,2));
         assert.ok(match(1,1));
