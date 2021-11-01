@@ -2,6 +2,7 @@
   "name": "structural-match",
   "version": "1.0.10",
   "description": "Structural matching utility.",
+  "types": "dist/index.d.ts",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha ./test"
