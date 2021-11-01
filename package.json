@@ -1,6 +1,6 @@
 {
   "name": "structural-match",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Structural matching utility.",
   "types": "dist/index.d.ts",
   "main": "index.js",
