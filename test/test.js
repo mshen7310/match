@@ -1,7 +1,14 @@
 const match = require('../index');
 const assert = require('assert');
 
+function test_primitive(x) {
+	return x !== undefined && match.primitive(x)
+}
+
 describe('Adapter Testing match.js', function () {
+	it('should distinguish {a:1} and {b:primitive}', function () {
+		assert.ok(!match({ a: 1 }, { b: test_primitive }));
+	})
 	it('should find sub array in array', function () {
 		assert.ok(match([1, 2, 3, 4, 5], match.subarray([2, 3])));
 		assert.ok(match([1, 2, 3, 4, 5], match.subarray([1, 2])));
