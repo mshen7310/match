@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/mshen7310/match#readme",
   "devDependencies": {
-    "mocha": "^6.2.2",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "typescript": "^4.4.4"
   }
